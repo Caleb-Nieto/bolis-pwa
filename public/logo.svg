@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <!-- Fondo blanco -->
+  <rect width="512" height="512" fill="#FFFFFF"/>
+
+  <!-- Grupo del Boli con rotación para dar dinamismo de icono -->
+  <g transform="rotate(-30 256 256)">
+    
+    <!-- 1. Plásticos sobrantes arriba del nudo (orejitas abiertas) -->
+    <path d="M 238 90 C 230 65, 205 52, 195 50 C 205 75, 222 92, 236 102" 
+          fill="none" stroke="#000000" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 274 90 C 282 65, 307 52, 317 50 C 307 75, 290 92, 276 102" 
+          fill="none" stroke="#000000" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- 2. Nudo apretado central -->
+    <!-- Pliegues del fruncido justo arriba del nudo -->
+    <path d="M 228 106 C 242 110, 270 110, 284 106" 
+          fill="none" stroke="#000000" stroke-width="10" stroke-linecap="round"/>
+    <!-- Nudo elíptico -->
+    <ellipse cx="256" cy="116" rx="24" ry="12" 
+             fill="#FFFFFF" stroke="#000000" stroke-width="12"/>
+    <!-- Detalle interno del nudo -->
+    <path d="M 248 112 C 254 118, 262 118, 268 114" 
+          fill="none" stroke="#000000" stroke-width="8" stroke-linecap="round"/>
+
+    <!-- 3. Cuerpo principal de la bolsa y base con dos puntas selladas -->
+    <!-- 
+      Comienza en el cuello fruncido (debajo del nudo), se ensancha hacia el cuerpo cilíndrico/congelado,
+      baja recto y remata en la base plana de bolsa plástica formando dos esquinas/puntas bien marcadas.
+    -->
+    <path d="M 242 127
+             C 215 145, 185 180, 185 240
+             L 185 410
+             L 175 440
+             C 195 432, 230 430, 256 430
+             C 282 430, 317 432, 337 440
+             L 327 410
+             L 327 240
+             C 327 180, 297 145, 270 127" 
+          fill="none" stroke="#000000" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- 4. Costura de sellado inferior (característica de la bolsa rectangular) -->
+    <path d="M 183 422 L 329 422" 
+          fill="none" stroke="#000000" stroke-width="8" stroke-linecap="round" stroke-dasharray="1 14"/>
+
+    <!-- 5. Pliegues de tensión bajo el nudo -->
+    <path d="M 245 132 L 235 160" fill="none" stroke="#000000" stroke-width="8" stroke-linecap="round"/>
+    <path d="M 267 132 L 277 160" fill="none" stroke="#000000" stroke-width="8" stroke-linecap="round"/>
+    <path d="M 256 128 L 256 155" fill="none" stroke="#000000" stroke-width="8" stroke-linecap="round"/>
+
+    <!-- 6. Líneas de brillo/relieve del hielo congelado en el cilindro -->
+    <path d="M 212 210 L 212 360" 
+          fill="none" stroke="#000000" stroke-width="12" stroke-linecap="round"/>
+    <path d="M 228 375 L 228 395" 
+          fill="none" stroke="#000000" stroke-width="8" stroke-linecap="round"/>
+  </g>
+</svg>
