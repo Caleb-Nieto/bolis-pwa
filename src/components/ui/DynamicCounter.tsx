@@ -1,28 +1,22 @@
 import React, { useState } from 'react';
 import AddShoppingCartIcon from '@assets/icons/add-shoppingcart-icon.svg?react'
 
-const DynamicCounter: React.FC = () => {
-    const [count, setCount] = useState<number>(0);
+interface DynamicCounterProps {
+    count: number;
+    onIncrement: (e: React.MouseEvent) => void;
+    onDecrement: (e: React.MouseEvent) => void;
+    onAddInitial: (e: React.MouseEvent) => void;
+}
+
+const DynamicCounter: React.FC<DynamicCounterProps> = ({ count, onIncrement, onDecrement, onAddInitial }) => {
     const [isHovered, setIsHovered] = useState<boolean>(false);
 
     // Iniciar el contador a 1 si estaba en 0
-    const handleInitialClick = () => {
+    const handleInitialClick = (e: React.MouseEvent) => {
         if (count === 0) {
-            setCount(1);
+            onAddInitial(e);
             setIsHovered(true);
         }
-    };
-
-    // Incrementar
-    const increment = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        setCount((prev) => prev + 1);
-    };
-
-    // Decrementar
-    const decrement = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        setCount((prev) => Math.max(0, prev - 1));
     };
 
     return (
@@ -56,7 +50,7 @@ const DynamicCounter: React.FC = () => {
                     }`}
                 >
                     <button
-                        onClick={decrement}
+                        onClick={onDecrement}
                         className="w-10 h-10 flex items-center justify-center rounded-full  transition-colors focus:outline-none"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -67,7 +61,7 @@ const DynamicCounter: React.FC = () => {
                     <span className="font-bold text-[16px] w-6 text-center">{count}</span>
 
                     <button
-                        onClick={increment}
+                        onClick={onIncrement}
                         className="w-10 h-10 flex items-center justify-center rounded-full  transition-colors focus:outline-none"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

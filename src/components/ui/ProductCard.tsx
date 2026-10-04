@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import DynamicCounter from "./DynamicCounter";
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart, removeFromCart } from '../../store/cartSlice';
+import type { RootState } from '../../store';
 
 interface Boli {
     id: number,
     flavour: string,
     base: string,
-    stock: string,
-    price: string,
+    stock: number,
+    price: number,
 }
 
 interface ProductCardProps {
@@ -15,6 +18,24 @@ interface ProductCardProps {
 
 export default function ProductCard({ boli }: ProductCardProps) {
     const [isEditing, setIsEditing] = useState(false);
+    const dispatch = useDispatch();
+    const cartItem = useSelector((state: RootState) => state.cart.cart.find(item => item.id === boli.id));
+    const quantity = cartItem ? cartItem.quantity : 0;
+
+    const handleAddInitial = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        dispatch(addToCart(boli));
+    };
+
+    const handleIncrement = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        dispatch(addToCart(boli));
+    };
+
+    const handleDecrement = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        dispatch(removeFromCart(boli.id));
+    };
 
     if (isEditing) {
         return (
@@ -77,7 +98,12 @@ export default function ProductCard({ boli }: ProductCardProps) {
             </div>
 
             <div className="absolute right-1 -top-4 flex flex-col">
-                <DynamicCounter/>
+                <DynamicCounter
+                    count={quantity}
+                    onAddInitial={handleAddInitial}
+                    onIncrement={handleIncrement}
+                    onDecrement={handleDecrement}
+                />
             </div>
         </div>
     );

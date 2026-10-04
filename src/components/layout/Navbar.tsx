@@ -1,9 +1,13 @@
 import StoreFrontIcon from '@assets/icons/storefront-icon.svg?react'
 import ShoppingCartIcon from '@assets/icons/shoppingCart-icon.svg?react'
 import {NavLink, useLocation} from "react-router-dom";
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../store';
 
 export default function Navbar() {
     const location = useLocation();
+    const cart = useSelector((state: RootState) => state.cart.cart);
+    const totalQuantity = cart.reduce((total, item) => total + item.quantity, 0);
 
     // Calculamos la posición:
     // w-16 = 64px, gap-5 = 20px -> Cada salto es de 84px
@@ -49,10 +53,12 @@ export default function Navbar() {
                 }
             >
                 <ShoppingCartIcon width="30" height="30"/>
-                <div className="absolute right-1 top-0 w-6 h-6 border border-gray-300
-                bg-white flex items-center rounded-full">
-                    <p className="mx-auto">3</p>
-                </div>
+                {totalQuantity > 0 && (
+                    <div className="absolute right-1 top-0 w-6 h-6 border border-gray-300
+                    bg-white flex items-center rounded-full">
+                        <p className="mx-auto text-[12px] font-bold">{totalQuantity}</p>
+                    </div>
+                )}
             </NavLink>
         </div>
     );
