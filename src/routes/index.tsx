@@ -3,8 +3,7 @@ import MainLayout from "@components/layout/MainLayout.tsx";
 import { ProtectedRoute } from "@components/guards/ProtectedRoute.tsx";
 
 import Main from "../pages/Main.tsx";
-import NewRegister from "../pages/NewRegister.tsx";
-import Basket from "../pages/Basket.tsx";
+import ShoppingCart from "../pages/ShoppingCart.tsx";
 import Login from "../pages/Login.tsx";
 
 const router = createBrowserRouter([
@@ -25,11 +24,7 @@ const router = createBrowserRouter([
                     },
                     {
                         path: '/basket',
-                        element: <Basket />
-                    },
-                    {
-                        path: '/new-register',
-                        element: <NewRegister />
+                        element: <ShoppingCart />
                     }
                 ]
             }
