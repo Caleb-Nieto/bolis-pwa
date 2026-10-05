@@ -27,14 +27,17 @@ const cartSlice = createSlice({
     initialState,
     reducers: {
         setProducts: (state, action: PayloadAction<Product[]>) => {
-            // Solo establecer si está vacío para no sobreescribir el stock
-            if (state.products.length === 0) {
-                state.products = action.payload.map(p => ({
-                    ...p,
-                    stock: Number(p.stock),
-                    price: Number(p.price)
-                }));
-            }
+            // Merge new product data while preserving cart-adjusted stock
+            const cartDeductions: Record<number, number> = {};
+            state.cart.forEach(item => {
+                cartDeductions[item.id] = item.quantity;
+            });
+
+            state.products = action.payload.map(p => ({
+                ...p,
+                stock: Number(p.stock) - (cartDeductions[p.id] ?? 0),
+                price: Number(p.price),
+            }));
         },
         addToCart: (state, action: PayloadAction<Product>) => {
             const product = action.payload;
@@ -85,9 +88,19 @@ const cartSlice = createSlice({
                     }
                 }
             }
-        }
+        },
+        clearCart: (state) => {
+            // Return cart items' quantities back to products stock before clearing
+            state.cart.forEach(item => {
+                const storeProduct = state.products.find(p => p.id === item.id);
+                if (storeProduct) {
+                    storeProduct.stock += item.quantity;
+                }
+            });
+            state.cart = [];
+        },
     }
 });
 
-export const { setProducts, addToCart, removeFromCart, updateQuantity } = cartSlice.actions;
+export const { setProducts, addToCart, removeFromCart, updateQuantity, clearCart } = cartSlice.actions;
 export default cartSlice.reducer;
