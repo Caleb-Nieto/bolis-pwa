@@ -16,6 +16,10 @@ export default defineConfig({
           devOptions:{
               enabled: true
           },
+          workbox: {
+              // Ensure all generated chunks are precached for offline support
+              globPatterns: ['**/*.{js,css,html,ico,png,svg,json}']
+          },
           manifest: {
             name: 'Bolis App Manager',
               short_name: 'Bolis',
@@ -49,6 +53,27 @@ export default defineConfig({
   ],
     server: {
       allowedHosts: true
+    },
+    build: {
+        chunkSizeWarningLimit: 600,
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (id.includes('node_modules')) {
+                        if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+                            return 'vendor-react';
+                        }
+                        if (id.includes('@redux') || id.includes('react-redux')) {
+                            return 'vendor-redux';
+                        }
+                        if (id.includes('framer-motion') || id.includes('vaul') || id.includes('lucide-react')) {
+                            return 'vendor-ui';
+                        }
+                        return 'vendor';
+                    }
+                }
+            }
+        }
     },
     resolve : {
       alias: {
