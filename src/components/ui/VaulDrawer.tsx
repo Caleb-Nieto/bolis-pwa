@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Drawer } from 'vaul';
 import AddIcon from '@assets/icons/add-icon.svg?react';
 import { useGetBoliCategoriesQuery, useCreateBoliMutation } from '../../store/bolisApi';
+import toast from "react-hot-toast";
 
 export default function VaulDrawer() {
     const [open, setOpen] = useState(false);
@@ -12,7 +13,6 @@ export default function VaulDrawer() {
     const [price, setPrice] = useState<number>(0);
     const [stockQuantity, setStockQuantity] = useState<string>('');
     const [errors, setErrors] = useState<Record<string, string>>({});
-    const [successMsg, setSuccessMsg] = useState('');
 
     const { data: categories = [] } = useGetBoliCategoriesQuery();
     const [createBoli, { isLoading }] = useCreateBoliMutation();
@@ -24,7 +24,6 @@ export default function VaulDrawer() {
         setPrice(0);
         setStockQuantity('');
         setErrors({});
-        setSuccessMsg('');
     };
 
     const validate = (): boolean => {
@@ -38,7 +37,6 @@ export default function VaulDrawer() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setSuccessMsg('');
         if (!validate()) return;
 
         try {
@@ -48,14 +46,11 @@ export default function VaulDrawer() {
                 stockQuantity: Number(stockQuantity),
             }).unwrap();
 
-            setSuccessMsg('¡Boli creado exitosamente!');
             resetForm();
-            setTimeout(() => {
-                //setOpen(false);
-                setSuccessMsg('');
-            }, 1200);
+            setOpen(false);
+            toast.success('¡Agregaste un nuevo sabor a la lista!', {duration: 4000, position: 'bottom-center'})
         } catch {
-            setErrors({ submit: 'Error al crear el boli. Intenta de nuevo.' });
+            toast.error('Error al agregar a la lista', {duration: 4000, position: 'bottom-center'})
         }
     };
 
@@ -65,26 +60,14 @@ export default function VaulDrawer() {
                 <AddIcon height="24" className="mx-auto" />
             </Drawer.Trigger>
             <Drawer.Portal>
-                <Drawer.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
-                <Drawer.Content className="bg-white rounded-t-2xl h-fit fixed bottom-0 left-0 right-0 outline-none shadow-2xl">
+                <Drawer.Overlay className="fixed z-10 inset-0 bg-black/40 backdrop-blur-sm" />
+                <Drawer.Content className="bg-white rounded-t-2xl z-20 h-fit fixed bottom-0 left-0 right-0 outline-none shadow-2xl">
                     <Drawer.Handle className="mt-3 mb-2" />
                     <div className="p-6 flex flex-col gap-4">
                         <div className="flex flex-col text-center">
                             <h1 className="text-xl font-medium text-gray-900">Nuevo sabor</h1>
                             <p className="text-sm text-gray-500">Agrega un nuevo producto a la lista</p>
                         </div>
-
-                        {successMsg && (
-                            <div className="text-center text-sm text-green-600 font-medium py-1">
-                                {successMsg}
-                            </div>
-                        )}
-
-                        {errors.submit && (
-                            <div className="text-center text-sm text-red-500 font-medium py-1">
-                                {errors.submit}
-                            </div>
-                        )}
 
                         <form className="w-full text-[16px] flex gap-3 flex-col" onSubmit={handleSubmit}>
                             {/* Sabor */}
@@ -94,7 +77,7 @@ export default function VaulDrawer() {
                                         value={flavour}
                                         onChange={e => setFlavour(e.target.value)}
                                         placeholder="Sabor"
-                                        className="h-12 px-4 border-b border-gray-200 bg-transparent outline-none focus:bg-white transition-colors"
+                                        className="h-11 px-4 border-b border-gray-200 bg-transparent outline-none focus:bg-white transition-colors"
                                     />
 
                                     {/* Ingrediente base / Category */}
@@ -106,7 +89,7 @@ export default function VaulDrawer() {
                                                 const selectedCategory = categories.find(c => c.boliCategoryId === +e.target.value);
                                                 setPrice(selectedCategory?.price?? 0);
                                             }}
-                                            className="w-full h-12 appearance-none px-4 bg-transparent outline-none focus:bg-white transition-colors"
+                                            className="w-full h-11 appearance-none px-4 bg-transparent outline-none focus:bg-white transition-colors"
                                         >
                                             <option value="0" disabled>Ingrediente base</option>
                                             {categories.map(cat => (
@@ -139,7 +122,7 @@ export default function VaulDrawer() {
                                             type="number"
                                             min="0"
                                             step="0.01"
-                                            className="w-full h-12 text-right px-4 border border-gray-200 rounded-xl bg-gray-50/50 outline-none focus:bg-white transition-colors focus:border-gray-300"
+                                            className="w-full h-11 text-right px-4 border border-gray-200 rounded-xl bg-gray-50/50 outline-none focus:bg-white transition-colors focus:border-gray-300"
                                         />
                                     </div>
                                     {errors.price && <p className="text-xs text-red-500 px-1">{errors.price}</p>}
@@ -151,7 +134,7 @@ export default function VaulDrawer() {
                                         placeholder="Cantidad"
                                         type="number"
                                         min="0"
-                                        className="w-full h-12 px-4 border border-gray-200 rounded-xl bg-gray-50/50 outline-none focus:bg-white transition-colors focus:border-gray-300"
+                                        className="w-full h-11 px-4 border border-gray-200 rounded-xl bg-gray-50/50 outline-none focus:bg-white transition-colors focus:border-gray-300"
                                     />
                                     {errors.stock && <p className="text-xs text-red-500 px-1">{errors.stock}</p>}
                                 </div>
@@ -160,12 +143,13 @@ export default function VaulDrawer() {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="mt-4 w-full h-12 flex items-center justify-center rounded-xl bg-gray-900 text-white font-medium shadow-sm transition-all active:scale-[0.98] active:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="mt-4 w-full h-11 flex items-center justify-center rounded-xl bg-gray-900 text-white font-medium shadow-sm transition-all active:scale-[0.98] active:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {isLoading ? 'Guardando...' : 'Guardar producto'}
                             </button>
                         </form>
                     </div>
+                    <div className="h-24"></div>
                 </Drawer.Content>
             </Drawer.Portal>
         </Drawer.Root>
