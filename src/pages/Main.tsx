@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { setProducts } from '../store/cartSlice';
 import { useGetBolisQuery } from '../store/bolisApi';
 import { AnimatePresence, motion } from 'framer-motion';
+import toast from "react-hot-toast";
 
 export default function Main() {
     const dispatch = useDispatch();
@@ -52,6 +53,7 @@ export default function Main() {
     const handleCopyFlavours = () => {
         const text = bolis.map(b => b.flavour).join('\n');
         navigator.clipboard.writeText(text);
+        toast('Se copió al portapapeles', {icon: '📋'});
         setIsDropdownOpen(false);
     };
     
@@ -76,7 +78,7 @@ export default function Main() {
 
     return (
         <div className="flex flex-col gap-5">
-            <section className="sticky top-0 z-20 flex h-16 rounded-full bg-white/20 backdrop-blur-sm items-center p-2 w-full">
+            <section className="sticky top-0 z-10 flex h-16 rounded-full bg-white/20 backdrop-blur-sm items-center p-2 w-full">
                 <div className="w-full relative" ref={dropdownRef}>
                     <button 
                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -140,7 +142,7 @@ export default function Main() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Buscar..."
-                    className="border border-gray-200 shadow-sm bg-white h-12 px-4 flex items-center rounded-full w-full outline-none focus:border-gray-300 transition-colors"
+                    className="border border-gray-200 shadow-sm bg-white h-11 px-4 flex items-center rounded-full w-full outline-none focus:border-gray-300 transition-colors"
                 />
             </div>
 

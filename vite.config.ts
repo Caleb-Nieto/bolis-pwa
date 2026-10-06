@@ -66,7 +66,7 @@ export default defineConfig({
                         if (id.includes('@redux') || id.includes('react-redux')) {
                             return 'vendor-redux';
                         }
-                        if (id.includes('framer-motion') || id.includes('vaul') || id.includes('lucide-react')) {
+                        if (id.includes('framer-motion') || id.includes('vaul') || id.includes('lucide-react') || id.includes('react-hot-toast')) {
                             return 'vendor-ui';
                         }
                         return 'vendor';

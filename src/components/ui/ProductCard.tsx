@@ -5,6 +5,7 @@ import { addToCart, removeFromCart } from '../../store/cartSlice';
 import type { RootState } from '../../store';
 import type { Boli } from '../../store/bolisApi';
 import { useUpdateBoliMutation, useGetBoliCategoriesQuery } from '../../store/bolisApi';
+import toast from "react-hot-toast";
 
 interface ProductCardProps {
     boli: Boli;
@@ -76,8 +77,9 @@ export default function ProductCard({ boli }: ProductCardProps) {
             }).unwrap();
             setAddStock('');
             setIsEditing(false);
+            toast.success('¡Se actualizó correctemante!',{duration: 4000, position: 'bottom-center'})
         } catch {
-            // Error silently — could add a toast here
+            toast.error('Ocurrió un error al actualizar',{duration: 4000, position: 'bottom-center'})
         } finally {
             setIsSubmitting(false);
         }
