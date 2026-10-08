@@ -87,6 +87,7 @@ export const bolisApi = createApi({
                 method: 'POST',
                 body,
             }),
+            invalidatesTags: ['Boli'],
         }),
     }),
 });

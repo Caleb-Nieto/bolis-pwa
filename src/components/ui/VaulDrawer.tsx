@@ -77,6 +77,8 @@ export default function VaulDrawer() {
                                         value={flavour}
                                         onChange={e => setFlavour(e.target.value)}
                                         placeholder="Sabor"
+                                        maxLength={50}
+                                        autoFocus
                                         className="h-11 px-4 border-b border-gray-200 bg-transparent outline-none focus:bg-white transition-colors"
                                     />
 
