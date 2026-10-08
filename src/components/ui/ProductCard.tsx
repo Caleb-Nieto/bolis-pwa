@@ -106,6 +106,7 @@ export default function ProductCard({ boli }: ProductCardProps) {
                             name="flavour"
                             defaultValue={boli.flavour}
                             placeholder="Sabor"
+                            maxLength={50}
                             className="w-full h-10 px-3 text-sm border border-gray-200 rounded-xl bg-gray-50/50 outline-none focus:bg-white transition-colors focus:border-gray-300"
                             required
                         />
@@ -182,7 +183,7 @@ export default function ProductCard({ boli }: ProductCardProps) {
 
             <div className="flex flex-col text-right cursor-pointer" onClick={() => setIsEditing(true)}>
                 <p className="text-[13px] text-gray-500">Disponibles</p>
-                <p className="text-[16px] font-medium text-gray-900">{displayedStock}</p>
+                <p className={`text-[16px] font-medium ${displayedStock < 3 ? 'text-red-400' : 'text-gray-900'}`}>{displayedStock}</p>
             </div>
 
             <div className="absolute right-1 -top-4 flex flex-col">
