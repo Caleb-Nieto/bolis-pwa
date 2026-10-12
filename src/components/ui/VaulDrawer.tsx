@@ -35,6 +35,24 @@ export default function VaulDrawer() {
         return Object.keys(newErrors).length === 0;
     };
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
+        if (e.key === 'Enter') {
+            const target = e.target as HTMLElement;
+            if (target.tagName === 'BUTTON') return;
+            e.preventDefault();
+            
+            const form = e.currentTarget;
+            const focusableElements = Array.from(
+                form.querySelectorAll('input:not([disabled]), select, button:not([disabled])')
+            ) as HTMLElement[];
+            
+            const index = focusableElements.indexOf(target);
+            if (index > -1 && index < focusableElements.length - 1) {
+                focusableElements[index + 1].focus();
+            }
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!validate()) return;
@@ -48,16 +66,17 @@ export default function VaulDrawer() {
 
             resetForm();
             setOpen(false);
-            toast.success('¡Agregaste un nuevo sabor a la lista!', {duration: 4000, position: 'bottom-center'})
+            toast.success('¡Agregaste un nuevo sabor a la lista!', {duration: 4000})
         } catch {
-            toast.error('Error al agregar a la lista', {duration: 4000, position: 'bottom-center'})
+            toast.error('Error al agregar a la lista', {duration: 4000})
         }
     };
 
     return (
         <Drawer.Root open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
-            <Drawer.Trigger className="w-11 p-2 h-11 flex items-center rounded-full border border-gray-200 shadow-sm bg-gray-800 text-white transition-transform active:scale-95 active:bg-gray-700">
-                <AddIcon height="24" className="mx-auto" />
+            <Drawer.Trigger className="px-3 h-11 flex items-center rounded-full border border-gray-200 shadow-sm bg-gray-900 text-white transition-transform active:scale-95 active:bg-blue-800">
+                <AddIcon height="18" className="mx-auto" />
+                <p>Nuevo</p>
             </Drawer.Trigger>
             <Drawer.Portal>
                 <Drawer.Overlay className="fixed z-10 inset-0 bg-black/40 backdrop-blur-sm" />
@@ -69,7 +88,7 @@ export default function VaulDrawer() {
                             <p className="text-sm text-gray-500">Agrega un nuevo producto a la lista</p>
                         </div>
 
-                        <form className="w-full text-[16px] flex gap-3 flex-col" onSubmit={handleSubmit}>
+                        <form className="w-full text-[16px] flex gap-3 flex-col" onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
                             {/* Sabor */}
                             <div className="flex flex-col gap-1">
                                 <div className="flex flex-col rounded-xl overflow-hidden border border-gray-200 bg-gray-50/50">

@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../store';
-import DynamicCounter from '../components/ui/DynamicCounter';
+import TrashCounter from '../components/ui/TrashCounter';
 import { addToCart, removeFromCart, clearCart } from '../store/cartSlice';
 import { useCreateOrderMutation } from '../store/bolisApi';
+import toast from 'react-hot-toast';
 
 export default function ShoppingCart() {
     const dispatch = useDispatch();
     const cart = useSelector((state: RootState) => state.cart.cart);
+    const products = useSelector((state: RootState) => state.cart.products);
     const [createOrder, { isLoading }] = useCreateOrderMutation();
     const [received, setReceived] = useState<string>('');
     const [orderError, setOrderError] = useState('');
@@ -59,8 +61,17 @@ export default function ShoppingCart() {
         }
     };
 
+    const handleIncrement = (boli: any) => {
+        const storeProduct = products.find(p => p.id === boli.id);
+        if (!storeProduct || storeProduct.stock <= 0) {
+            toast.error('No hay suficiente stock');
+            return;
+        }
+        dispatch(addToCart(boli));
+    };
+
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 px-5 pt-1">
             <h1 className="text-gray-900 text-2xl font-medium tracking-tight">Resumen de venta</h1>
 
             {/* Lista de productos */}
@@ -69,18 +80,15 @@ export default function ShoppingCart() {
                     <div key={boli.id} className="relative flex border border-gray-200 bg-white rounded-xl p-4 gap-3 w-full items-center shadow-sm">
                         <div className="flex flex-col gap-1 w-full">
                             <p className="text-[16px] text-gray-900 font-medium">{boli.flavour}</p>
-                            <div className="border border-gray-200 rounded-full bg-gray-50 flex items-center px-2 py-0.5 max-w-max">
-                                <p className="text-gray-500 text-[11px] font-medium tracking-wide">
-                                    {boli.base.toLocaleUpperCase()}
-                                </p>
+                            <div className="border border-gray-200 rounded-full bg-gray-100 flex items-center px-2 max-w-max max-h-max">
+                                <p className="text-[11px] font-medium">{boli.base}</p>
                             </div>
                         </div>
                         <div className="flex gap-4 items-center">
-                            <DynamicCounter
+                            <TrashCounter
                                 count={boli.quantity}
-                                onAddInitial={() => dispatch(addToCart(boli))}
-                                onIncrement={() => dispatch(addToCart(boli))}
-                                onDecrement={() => dispatch(removeFromCart(boli.id))}
+                                onIncrement={(e) => { e.stopPropagation(); handleIncrement(boli); }}
+                                onDecrement={(e) => { e.stopPropagation(); dispatch(removeFromCart(boli.id)); }}
                             />
                             <div className="flex flex-col text-right min-w-max">
                                 <p className="text-[14px] text-gray-500">{boli.quantity} x ${boli.price}</p>
