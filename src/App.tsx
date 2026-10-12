@@ -63,8 +63,8 @@ const App = () => {
             <Toaster toastOptions={{
                 style: {
                     borderRadius: '20px',
-                    color: 'white',
-                    background: '#333'
+                    color: 'black',
+                    background: '#fff'
                 }
             }}/>
             <RouterProvider router={router} />

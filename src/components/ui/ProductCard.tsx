@@ -30,8 +30,26 @@ export default function ProductCard({ boli }: ProductCardProps) {
 
     const [updateBoli] = useUpdateBoliMutation();
 
+    const dispatchFlyToCart = (e: React.MouseEvent) => {
+        const target = e.currentTarget as HTMLElement | null;
+        const rect = target?.getBoundingClientRect();
+        const startX = rect && rect.width > 0 ? rect.left + rect.width / 2 : (e.clientX || window.innerWidth / 2);
+        const startY = rect && rect.height > 0 ? rect.top + rect.height / 2 : (e.clientY || window.innerHeight / 2);
+
+        window.dispatchEvent(new CustomEvent('fly-to-cart', {
+            detail: { startX, startY }
+        }));
+    };
+
     const handleAddInitial = (e: React.MouseEvent) => {
         e.stopPropagation();
+        if (displayedStock <= 0) {
+            toast.error('No hay suficiente stock');
+            return;
+        }
+
+        dispatchFlyToCart(e);
+
         dispatch(addToCart({
             id: boliId,
             flavour: boli.flavour,
@@ -43,6 +61,13 @@ export default function ProductCard({ boli }: ProductCardProps) {
 
     const handleIncrement = (e: React.MouseEvent) => {
         e.stopPropagation();
+        if (displayedStock <= 0) {
+            toast.error('No hay suficiente stock');
+            return;
+        }
+
+        dispatchFlyToCart(e);
+
         dispatch(addToCart({
             id: boliId,
             flavour: boli.flavour,
@@ -55,6 +80,24 @@ export default function ProductCard({ boli }: ProductCardProps) {
     const handleDecrement = (e: React.MouseEvent) => {
         e.stopPropagation();
         dispatch(removeFromCart(boliId));
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
+        if (e.key === 'Enter') {
+            const target = e.target as HTMLElement;
+            if (target.tagName === 'BUTTON') return;
+            e.preventDefault();
+            
+            const form = e.currentTarget;
+            const focusableElements = Array.from(
+                form.querySelectorAll('input, select, button')
+            ) as HTMLElement[];
+            
+            const index = focusableElements.indexOf(target);
+            if (index > -1 && index < focusableElements.length - 1) {
+                focusableElements[index + 1].focus();
+            }
+        }
     };
 
     const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -77,9 +120,9 @@ export default function ProductCard({ boli }: ProductCardProps) {
             }).unwrap();
             setAddStock('');
             setIsEditing(false);
-            toast.success('¡Se actualizó correctemante!',{duration: 4000, position: 'bottom-center'})
+            toast.success('¡Se actualizó correctemante!',{duration: 4000})
         } catch {
-            toast.error('Ocurrió un error al actualizar',{duration: 4000, position: 'bottom-center'})
+            toast.error('Ocurrió un error al actualizar',{duration: 4000})
         } finally {
             setIsSubmitting(false);
         }
@@ -87,7 +130,7 @@ export default function ProductCard({ boli }: ProductCardProps) {
 
     if (isEditing) {
         return (
-            <div className="relative flex flex-col border border-gray-200 bg-white rounded-xl p-4 gap-3 w-full shadow-md transition-all">
+            <div className="relative flex flex-col border border-gray-200 bg-white rounded-xl p-4 gap-3 w-full shadow-md transition-all col-span-full">
                 <div className="flex justify-between items-center mb-1">
                     <h3 className="text-sm font-medium text-gray-900">Editar producto</h3>
                     <button
@@ -99,7 +142,7 @@ export default function ProductCard({ boli }: ProductCardProps) {
                     </button>
                 </div>
 
-                <form className="w-full flex gap-3 flex-col" onSubmit={handleUpdate}>
+                <form className="w-full flex gap-3 flex-col" onSubmit={handleUpdate} onKeyDown={handleKeyDown}>
                     {/* Flavour & Category (Editable) */}
                     <div className="flex flex-col gap-2">
                         <input
@@ -169,30 +212,29 @@ export default function ProductCard({ boli }: ProductCardProps) {
     }
 
     return (
-        <div className="relative flex border border-gray-200 bg-white rounded-xl p-4 gap-3 w-full items-center shadow-sm hover:shadow-md transition-shadow group">
-            <div className="flex flex-col gap-2 w-full cursor-pointer" onClick={() => setIsEditing(true)}>
-                <p className="text-[16px] text-gray-900 font-medium group-hover:text-gray-600 transition-colors">
-                    {boli.flavour}
-                </p>
-                <div className="border border-gray-200 rounded-full bg-gray-50 flex items-center px-2 py-0.5 max-w-max max-h-max">
-                    <p className="text-gray-500 text-[11px] font-medium tracking-wide">
-                        {(boli.category?.category?? '').toLocaleUpperCase()}
+        <div className="relative flex flex-col border border-gray-200 bg-white rounded-xl p-4 gap-1 w-full items-center shadow-sm hover:shadow-md transition-shadow group">
+            <div className="flex flex-col gap-2 w-full">
+                <div className="flex gap-2 w-full cursor-pointer" onClick={() => setIsEditing(true)}>
+                    <p className="text-[16px] text-gray-900 font-medium group-hover:text-gray-600 transition-colors">
+                        {boli.flavour}
                     </p>
                 </div>
-            </div>
-
-            <div className="flex flex-col text-right cursor-pointer" onClick={() => setIsEditing(true)}>
-                <p className="text-[13px] text-gray-500">Disponibles</p>
-                <p className={`text-[16px] font-medium ${displayedStock < 3 ? 'text-red-400' : 'text-gray-900'}`}>{displayedStock}</p>
-            </div>
-
-            <div className="absolute right-1 -top-4 flex flex-col">
-                <DynamicCounter
-                    count={quantity}
-                    onAddInitial={handleAddInitial}
-                    onIncrement={handleIncrement}
-                    onDecrement={handleDecrement}
-                />
+                <div className="flex">
+                    <div className={`flex w-full items-center text-right cursor-pointer ${displayedStock === 0 ? 'text-red-400/90' : 'text-gray-500'}`} onClick={() => setIsEditing(true)}>
+                        <p className={`text-[14px] font-medium text-gray-500`}>stock: <span className={`${displayedStock === 0 ? 'text-red-400/90' : 'text-gray-500'}`}>{displayedStock}</span></p>
+                    </div>
+                    <div className="border border-gray-200 rounded-full bg-gray-100 flex items-center px-2 max-w-max max-h-max">
+                            <p className="text-[11px] font-medium">{boli.category.category}</p>
+                    </div>
+                </div>
+                <div className="flex justify-end">
+                    <DynamicCounter
+                        count={quantity}
+                        onAddInitial={handleAddInitial}
+                        onIncrement={handleIncrement}
+                        onDecrement={handleDecrement}
+                    />
+                </div>
             </div>
         </div>
     );

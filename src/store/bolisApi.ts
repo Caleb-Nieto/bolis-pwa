@@ -11,7 +11,7 @@ export interface BoliCategory {
 export interface Boli {
     boliId: number
     flavour: string;
-    category?: BoliCategory;
+    category: BoliCategory;
     stockQuantity: number;
 }
 
